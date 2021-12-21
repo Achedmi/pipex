@@ -6,7 +6,7 @@
 /*   By: achedmi <achedmi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/18 12:12:58 by achedmi           #+#    #+#             */
-/*   Updated: 2021/12/21 12:13:48 by achedmi          ###   ########.fr       */
+/*   Updated: 2021/12/21 19:11:43 by achedmi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include<unistd.h>
 #include<sys/wait.h>
 #include"./libft/libft.h"
+#include"./get_next_line/get_next_line.h"
 
 char	*check_acsess(char *commande)
 {
@@ -27,34 +28,84 @@ char	*check_acsess(char *commande)
 		return (&path[4]);
 	else if (access(path, F_OK) == 0)
 		return (path);
+	free(path);
 	return ("");
 }
+
+// void	test(int *fd, char *commande, int fd1, int fd2)
+// {
+	
+// }
 
 int	main(int argc, char **argv, char **env)
 {
 	int		fd[2];
 	char	*commande;
-	int		fd1;
-	int		fd2;
 	int		i;
-
-	if (argc < 5)
-		return (1);
+	char	*tmp;
+	char	*limiter;
+	int		fd1 = open("./txt7.txt", O_RDWR);
+	
 	if ((argc < 5) || (pipe(fd) == -1))
 		return (1);
-	commande = check_acsess("echo");
-	if (ft_strlen(commande) == 0)
-		return (1);
-	i = 0;
-	while (argv[i])
-		i++;
-	fd1 = open(argv[1], O_RDONLY);
-	fd2 = open(argv[i - 1], O_RDWR | O_TRUNC);
-	dup2(fd1, 0);
-	dup2(fd2, 1);
+	i = 1;
+	if (ft_strncmp(argv[i], "here_doc", 8) == 0)
+	{
+		i += 2;
+		commande = check_acsess(argv[i]);
+		while (1)
+		{
+			tmp = get_next_line(1);
+			if (ft_strncmp(tmp, argv[i - 1], ft_strlen(tmp) - 1) == 0)
+			{
+				free(tmp);
+				break ;
+			}
+			write(fd[1], tmp, ft_strlen(tmp));
+			free(tmp);
+		}
+	}
+	
+	dup2(fd[0], 0);
+	dup2(fd1, 1);
+	char *args[] = {commande, NULL};
+	// while (argv[i + 1])
+	// {	
+	// 	if (ft_strlen(check_acsess(argv[i])) != 0)
+	// 	{
+	// 		free(commande);
+	// 		commande = 
+	// 		int fk = fork();
+	// 		if (fk == 0)
+	// 		{
+	// 			execve(commande, args, NULL);
+	// 		}
+	// 		wait(NULL);
+	// 		i++;			
+	// 	}
+	// }
+
+	
+	/*
+	int fk = fork();
+	if (fk == 0)
+	{
+		execve(commande, args, NULL);
+	}*/
 	return (0);
 }
 
+// int main()
+// {
+// 	int	fd = open("./txt.txt", O_RDWR);
+// 	char *txt;
+// 	while (ft_strncmp(txt, "hi", 2) != 0)
+// 	{
+// 		txt = get_next_line(0);
+// 	}
+// 	// puts(txt);
+// 	return 0;
+// }
 // int	main(int n, char **args)
 // {
 // 	int	fd = open("./txt.txt", O_RDWR);
