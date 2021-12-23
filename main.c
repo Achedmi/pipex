@@ -6,7 +6,7 @@
 /*   By: achedmi <achedmi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/18 12:12:58 by achedmi           #+#    #+#             */
-/*   Updated: 2021/12/21 19:11:43 by achedmi          ###   ########.fr       */
+/*   Updated: 2021/12/23 14:28:11 by achedmi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,43 +32,67 @@ char	*check_acsess(char *commande)
 	return ("");
 }
 
-// void	test(int *fd, char *commande, int fd1, int fd2)
-// {
+void	execute(int i, char **argv, int *fd, int fd0)
+{
+	int		fd1;
+	int		argv_len;
+	int		fk;
+	char	*args[500];
+	char	str[500];
+	int		l = 0;
+
+	argv_len = 0;
+	while (argv[argv_len])
+		argv_len++;
 	
-// }
+	fd1 = open("txt7.txt", O_RDWR | O_TRUNC);
+	
+	
+	
+	puts(str);
+	
+}
+
+int	here_doc(char **argv, int *fd)
+{
+	char	*tmp;
+
+	tmp = get_next_line(0);
+	while (ft_strncmp(tmp, argv[2], ft_strlen(tmp) - 1) != 0)
+	{
+		write(fd[1], tmp, ft_strlen(tmp));
+		free(tmp);
+		tmp = get_next_line(0);
+	}
+	dup2(fd[0], 0);
+	return (3);
+}
 
 int	main(int argc, char **argv, char **env)
 {
 	int		fd[2];
-	char	*commande;
 	int		i;
-	char	*tmp;
-	char	*limiter;
-	int		fd1 = open("./txt7.txt", O_RDWR);
-	
+	int		fd0;
+
 	if ((argc < 5) || (pipe(fd) == -1))
 		return (1);
 	i = 1;
 	if (ft_strncmp(argv[i], "here_doc", 8) == 0)
+		i = here_doc(argv, fd);
+	else
 	{
-		i += 2;
-		commande = check_acsess(argv[i]);
-		while (1)
-		{
-			tmp = get_next_line(1);
-			if (ft_strncmp(tmp, argv[i - 1], ft_strlen(tmp) - 1) == 0)
-			{
-				free(tmp);
-				break ;
-			}
-			write(fd[1], tmp, ft_strlen(tmp));
-			free(tmp);
-		}
+		fd0 = open(argv[i], O_RDONLY);
+		dup2(fd0, 0);
+		i = 2;
 	}
-	
-	dup2(fd[0], 0);
-	dup2(fd1, 1);
-	char *args[] = {commande, NULL};
+	execute(i, argv, fd, fd0);
+	return (0);
+}
+
+
+	// dup2(fd[0], 0);
+	// dup2(fd1, 1);
+	// char *args[] = {commande, NULL};
 	// while (argv[i + 1])
 	// {	
 	// 	if (ft_strlen(check_acsess(argv[i])) != 0)
@@ -92,8 +116,6 @@ int	main(int argc, char **argv, char **env)
 	{
 		execve(commande, args, NULL);
 	}*/
-	return (0);
-}
 
 // int main()
 // {
@@ -143,3 +165,7 @@ int	main(int argc, char **argv, char **env)
 // }
 
 //infile "ls -l" "wc -l" outfile
+
+
+//	./pipex file1 cmd1 cmd2 cmd3 ... cmdn file2
+//	 ./pipex here_doc LIMITER cmd cmd1 file
