@@ -9,7 +9,7 @@
 			"type": "cppdbg",
 			"request": "launch",
 			"program": "/Users/achedmi/Desktop/pipex_hub/a.out",
-			"args": ["here_doc", "las", "sadfs", "wef", "fw", "sadfw"],
+			"args": ["txt.txt", "ls", "wc", "txt7.txt"],
 			"stopAtEntry": false,
 			"cwd": "/Users/achedmi/Desktop/pipex_hub/",
 			"environment": [],
