@@ -98,13 +98,18 @@ int	main(int argc, char **argv, char **env)
 	int		i;
 	int		j;
 
+	if (argc < 5)
+		return (0);
 	j = -1;
 	fds = malloc(10 * sizeof(int *));
-	if (fds == NULL || argc < 5)
+	if (fds == NULL)
 		return (0);
+	//this need to be respecting regulare file and here_doc
 	while (++j < argc - 2)
 	{
 		fds[j] = malloc(2 * sizeof(int));
+		if (fds[j] == NULL)
+			return (0);
 		if (pipe(fds[j]) == -1)
 			return (0);
 	}
@@ -114,5 +119,6 @@ int	main(int argc, char **argv, char **env)
 		i = file_case(argv[1], fds[0][1]);
 	close(fds[0][1]);
 	execute(&argv[i], fds, argc - i);
+	free(fds);
 	return (0);
 }
