@@ -32,43 +32,31 @@ char	*check_acsess(char *commande)
 	return ("");
 }
 
-void	execute(int i, char **argv, int *fd, int argc)
+void	execute(int i, char **argv, int fds[10][2], int argc)
 {
 	int		fd1;
 	int		fk;
-	char	*args[5];
 
 	fd1 = open(argv[argc - 1], O_RDWR | O_TRUNC);
-	while (argv[i])
+	while (argv[i + 1])
 	{
 		if (argv[i + 1] == argv[argc - 1])
-		{
-			close(fd[1]);
-			fd[1] = fd1;
-		}
-		else
-		{
-			close(fd[0]);
-			close(fd[1]);
-			pipe(fd);
-		}
+			fds[i - 1][1] = fd1;
 		fk = fork();
 		if (fk == 0)
 		{
-			dup2(fd[0], 0);
-			dup2(fd[1], 1);
-			close(fd[0]);
-			close(fd[1]);
-			args[0] = argv[i];
-			args[1] = NULL;
-			execve(check_acsess(argv[i]), args, NULL);
+			dup2(fds[i - 2][0], 0);
+			dup2(fds[i - 1][1], 1);
+			close(fds[i - 2][0]);
+			close(fds[i - 1][1]);
+			execve(check_acsess(ft_split(argv[i], ' ')[0]),
+				ft_split(argv[i], ' '), NULL);
 		}
 		wait(NULL);
+		close(fds[i - 2][0]);
+		close(fds[i - 1][1]);
 		i++;
 	}
-	close(fd[0]);
-	close(fd[1]);
-	close(fd1);
 }
 
 int	here_doc(char **argv, int *fd)
@@ -84,19 +72,29 @@ int	here_doc(char **argv, int *fd)
 	}
 	return (3);
 }
+
 int	main(int argc, char **argv, char **env)
 {
-	int		fd[2];
+	int		fds[10][2];
 	int		i;
 	int		txt;
 	char	*line;
 	char	*tmp;
 
-	if ((argc < 5) || (pipe(fd) == -1))
+	pipe(fds[0]);
+	pipe(fds[1]);
+	pipe(fds[2]);
+	pipe(fds[3]);
+	pipe(fds[4]);
+	pipe(fds[5]);
+	pipe(fds[6]);
+	if ((argc < 4))
 		return (1);
+	// if ((argc < 4) || (pipe(fd) == -1))
+	// 	return (1);
 	i = 1;
 	if (ft_strncmp(argv[i], "here_doc", 8) == 0)
-		i = here_doc(argv, fd);
+		i = here_doc(argv, fds[0]);
 	else
 	{
 		txt = open(argv[i], O_RDONLY);
@@ -105,12 +103,13 @@ int	main(int argc, char **argv, char **env)
 			line = get_next_line(txt);
 			if(line == NULL)
 				break;
-			write(fd[1], line, ft_strlen(line));
+			write(fds[0][1], line, ft_strlen(line));
 		}
 		i = 2;
 		close(txt);
 	}
-	execute(i, argv, fd, argc);
+	close(fds[0][1]);
+	execute(i, argv, fds, argc);
 	return (0);
 }
 
