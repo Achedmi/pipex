@@ -32,109 +32,33 @@ char	*check_acsess(char *commande)
 	return ("");
 }
 
-// void	execute(int i, char **argv, int *fd, int fd0)
-// {
-// 	int		fd1;
-// 	int		argv_len;
-// 	int		fk;
-// 	char	*args[500];
-
-// 	argv_len = 0;
-// 	while (argv[argv_len])
-// 		argv_len++;
-
-// 	fd1 = open("txt7.txt", O_RDWR | O_TRUNC);
-	
-// 	fk = fork();
-// 	if(fk == 0)
-// 	{
-// 		dup2(fd[1], 1);
-// 		close(fd[1]);
-
-// 		args[0] = argv[i];
-// 		args[1] = NULL;		
-// 		execve(check_acsess(argv[i]), args, NULL);
-// 	}	
-// 	wait(NULL);
-// 	i++;
-	
-// 	close(fd0);
-
-// 	fk = fork();
-// 	if(fk == 0)
-// 	{
-		
-// 		dup2(fd[0], 0);
-// 		dup2(fd[1], 1);
-		
-// 		close(fd[0]);
-// 		close(fd[1]);
-		
-// 		args[0] = argv[i];
-// 		args[1] = NULL;				
-// 		execve(check_acsess(argv[i]), args, NULL);
-// 	}	
-// 	wait(NULL);
-// 	i++;
-
-// 	close(fd[1]);
-
-// 	// puts(argv[i]);
-	
-// 	fk = fork();
-// 	if(fk == 0)
-// 	{
-// 		dup2(fd1, 1);
-// 		dup2(fd[0], 0);
-		
-// 		close(fd[0]);
-// 		close(fd1);
-		
-// 		args[0] = argv[i];
-// 		args[1] = NULL;
-		
-// 		execve(check_acsess(argv[i]), args, NULL);
-// 	}	
-// 	wait(NULL);
-	
-// 	close(fd1);
-// 	close(fd[0]);
-// 	close(fd[1]);
-// 	i++;
-	
-// }
-
 void	execute(int i, char **argv, int *fd, int argc)
 {
-	int	fd1;
-	int fk;
-	char *args[5];
-	char *line;
+	int		fd1;
+	int		fk;
+	char	*args[5];
 
-	fd1 =  open(argv[argc - 1], O_RDWR | O_TRUNC);
-	while(argv[i])
+	fd1 = open(argv[argc - 1], O_RDWR | O_TRUNC);
+	while (argv[i])
 	{
-		if(argv[i] == argv[argc - 2])
+		if (argv[i + 1] == argv[argc - 1])
 		{
 			close(fd[1]);
 			fd[1] = fd1;
 		}
 		else
 		{
-
 			close(fd[0]);
 			close(fd[1]);
 			pipe(fd);
 		}
 		fk = fork();
-		if(fk == 0)
+		if (fk == 0)
 		{
 			dup2(fd[0], 0);
 			dup2(fd[1], 1);
-
 			close(fd[0]);
 			close(fd[1]);
-
 			args[0] = argv[i];
 			args[1] = NULL;
 			execve(check_acsess(argv[i]), args, NULL);
@@ -142,7 +66,6 @@ void	execute(int i, char **argv, int *fd, int argc)
 		wait(NULL);
 		i++;
 	}
-
 	close(fd[0]);
 	close(fd[1]);
 	close(fd1);
@@ -169,7 +92,7 @@ int	main(int argc, char **argv, char **env)
 	char	*line;
 	char	*tmp;
 
-	if ((argc < 4) || (pipe(fd) == -1))
+	if ((argc < 5) || (pipe(fd) == -1))
 		return (1);
 	i = 1;
 	if (ft_strncmp(argv[i], "here_doc", 8) == 0)
