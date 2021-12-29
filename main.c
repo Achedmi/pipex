@@ -109,66 +109,43 @@ void	execute(int i, char **argv, int *fd, int argc)
 	int	fd1;
 	int fk;
 	char *args[5];
+	char *line;
 
-	// fd1 =  open("txt7.txt", O_RDWR | O_TRUNC);
-	fk = fork();
-	if(fk == 0)
+	fd1 =  open(argv[argc - 1], O_RDWR | O_TRUNC);
+	while(argv[i])
 	{
-		dup2(fd[1], 1);
-		
-		puts("lkjsad");
-		puts("lkjsad");
-		puts("lkjsad");
-		dup2(fd[0], 0);
-		
-		close(fd[0]);
-		close(fd[1]);
+		if(argv[i] == argv[argc - 2])
+		{
+			close(fd[1]);
+			fd[1] = fd1;
+		}
+		else
+		{
 
-		args[0] = argv[i];
-		args[1] = NULL;
-		execve(check_acsess(argv[i]), args, NULL);		
+			close(fd[0]);
+			close(fd[1]);
+			pipe(fd);
+		}
+		fk = fork();
+		if(fk == 0)
+		{
+			dup2(fd[0], 0);
+			dup2(fd[1], 1);
+
+			close(fd[0]);
+			close(fd[1]);
+
+			args[0] = argv[i];
+			args[1] = NULL;
+			execve(check_acsess(argv[i]), args, NULL);
+		}
+		wait(NULL);
+		i++;
 	}
-	wait(NULL);
-	i++;
 
 	close(fd[0]);
 	close(fd[1]);
-	// fk = fork();
-	// if(fk == 0)
-	// {
-	// 	dup2(fd[0], 0);
-	// 	dup2(fd[1], 1);
-
-	// 	close(fd[0]);
-	// 	close(fd[1]);
-
-	// 	args[0] = argv[i];
-	// 	args[1] = NULL;				
-	// 	execve(check_acsess(argv[i]), args, NULL);		
-	// }
-	// wait(NULL);
-	// i++;
-	
-	/*
-	fk = fork();
-	if(fk == 0)
-	{
-		dup2(fd1, 1);
-		close(fd[0]);
-		close(fd[1]);
-		close(fd1);
-		
-		args[0] = argv[i];
-		args[1] = NULL;				
-		execve(check_acsess(argv[i]), args, NULL);
-	}
-	wait(NULL);
-	i++;
-	*/
-
-	// close(fd[0]);
-	// close(fd[1]);
-	// close(fd1);
+	close(fd1);
 }
 
 int	here_doc(char **argv, int *fd)
@@ -184,39 +161,37 @@ int	here_doc(char **argv, int *fd)
 	}
 	return (3);
 }
-
 int	main(int argc, char **argv, char **env)
 {
 	int		fd[2];
 	int		i;
-	int		fd0;
+	int		txt;
 	char	*line;
+	char	*tmp;
 
-	if ((argc < 5) || (pipe(fd) == -1))
+	if ((argc < 4) || (pipe(fd) == -1))
 		return (1);
 	i = 1;
 	if (ft_strncmp(argv[i], "here_doc", 8) == 0)
 		i = here_doc(argv, fd);
 	else
 	{
-		fd0 = open(argv[i], O_RDONLY);		
+		txt = open(argv[i], O_RDONLY);
 		while (1)
 		{
-			line = get_next_line(fd0);
+			line = get_next_line(txt);
 			if(line == NULL)
 				break;
 			write(fd[1], line, ft_strlen(line));
-			free(line);
 		}
-		close(fd0);
 		i = 2;
+		close(txt);
 	}
-	
 	execute(i, argv, fd, argc);
 	return (0);
 }
 
-//infile "ls -l" "wc -l" outfile
+// ./a.out txt.txt ls wc txt7.txt
 
 
 //	./pipex file1 cmd1 cmd2 cmd3 ... cmdn file2
