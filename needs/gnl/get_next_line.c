@@ -59,12 +59,12 @@ char	*search_for_next(char *tmp_line, int fd)
 	char		*tmp_line_address;
 	char		*tmp_of_tmp;
 
-	tmp_of_tmp = malloc(BUFFER_SIZE + 1);
+	tmp_of_tmp = malloc(2);
 	if (!tmp_of_tmp)
 		return (NULL);
 	while (!has_next_line(tmp_line))
 	{
-		l = read(fd, tmp_of_tmp, BUFFER_SIZE);
+		l = read(fd, tmp_of_tmp, 1);
 		if (l <= 0)
 			break ;
 		tmp_of_tmp[l] = '\0';
@@ -82,9 +82,9 @@ char	*get_next_line(int fd)
 	char		*line;
 	char		*tmp_line;
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
+	if (fd < 0)
 		return (NULL);
-	tmp_line = ft_calloc(BUFFER_SIZE + 1, 1);
+	tmp_line = ft_calloc(2, 1);
 	if (!tmp_line)
 		return (NULL);
 	if (rest != NULL)
