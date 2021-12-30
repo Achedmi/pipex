@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include"../libft/libft.h"
+#include"get_next_line.h"
 
 int	has_next_line(char *str)
 {
