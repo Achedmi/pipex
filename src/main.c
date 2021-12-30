@@ -14,8 +14,8 @@
 #include<fcntl.h>
 #include<unistd.h>
 #include<sys/wait.h>
-#include"../libft/libft.h"
-#include"../gnl/get_next_line.h"
+#include"../needs/libft/libft.h"
+#include"../needs/gnl/get_next_line.h"
 
 char	*check_acsess(char *commande)
 {
