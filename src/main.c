@@ -115,7 +115,7 @@ int	file_case(char *file_name, int **fds, int argc)
 	return (2);
 }
 
-int	main(int argc, char **argv, char **env)
+int	main(int argc, char **argv)
 {
 	int		**fds;
 	int		i;
