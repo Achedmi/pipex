@@ -1,5 +1,6 @@
 NAME =	pipex.a
 SRCS =	src/main.c\
+		src/pipex_utiles.c\
 		needs/gnl/get_next_line.c\
 		needs/libft/ft_strlen.c\
 		needs/libft/ft_strlcat.c\
@@ -12,6 +13,7 @@ SRCS =	src/main.c\
 		needs/libft/ft_memmove.c\
 		needs/libft/ft_strncmp.c
 OBJS =	main.o\
+		pipex_utiles.o\
 		get_next_line.o\
 		ft_strlen.o\
 		ft_strlcat.o\
