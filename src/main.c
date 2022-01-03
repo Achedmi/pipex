@@ -6,7 +6,7 @@
 /*   By: achedmi <achedmi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/18 12:12:58 by achedmi           #+#    #+#             */
-/*   Updated: 2021/12/24 16:21:24 by achedmi          ###   ########.fr       */
+/*   Updated: 2022/01/03 11:16:15 by achedmi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ void	execute(char **argv, int **fds, int argc)
 	int		fd1;
 	int		fk;
 	int		i;
+	char	*acess;
 
 	i = 0;
 	fd1 = open(argv[argc - 1], O_RDWR | O_TRUNC);
@@ -51,12 +52,15 @@ void	execute(char **argv, int **fds, int argc)
 			dup2(fds[i + 1][1], 1);
 			close(fds[i][0]);
 			close(fds[i + 1][1]);
-			execve(check_acsess(ft_split(argv[i], ' ')[0]),
-				ft_split(argv[i], ' '), NULL);
+			free(fds[i]);
+			acess = check_acsess(ft_split(argv[i], ' ')[0]);			
+			execve(acess, ft_split(argv[i], ' '), NULL);
+			free(acess);
 		}
 		wait(NULL);
 		close(fds[i][0]);
 		close(fds[i + 1][1]);
+		free(fds[i]);
 		i++;
 	}
 }
@@ -136,9 +140,9 @@ int	main(int argc, char **argv)
 		return (0);
 	close(fds[0][1]);
 	execute(&argv[i], fds, argc - i);
-	free(fds);
+	system("leaks pipex");
 	return (0);
 }
 /*
-env variables
+	env variables
 */

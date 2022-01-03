@@ -43,4 +43,6 @@ clean :
 fclean : clean
 	rm -f ${PROG} ${NAME}
 
+re : clean fclean all
+
 #need to add bonus part
