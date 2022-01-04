@@ -6,7 +6,7 @@
 /*   By: achedmi <achedmi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/18 12:12:58 by achedmi           #+#    #+#             */
-/*   Updated: 2022/01/03 20:31:09 by achedmi          ###   ########.fr       */
+/*   Updated: 2022/01/04 19:02:59 by achedmi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,8 @@ void	childing(int in, int fds[2], char *commande)
 		close(in);
 		execve(check_acsess(ft_split(commande, ' ')[0]),
 			ft_split(commande, ' '), NULL);
-		exit(1);
+		write(2, ft_strjoin("zsh: command not found: ", commande),
+			ft_strlen(ft_strjoin("zsh: command not found: ", commande)));
 	}
 }
 
@@ -80,6 +81,11 @@ int	file_case(char *file_name, int fds[2], int argc)
 	if (pipe(fds) == -1)
 		return (-1);
 	file = open(file_name, O_RDONLY);
+	if (file == -1)
+	{
+		perror("Error ");
+		return (-1);
+	}
 	while (1)
 	{
 		line = get_next_line(file);
@@ -109,7 +115,6 @@ int	main(int argc, char **argv)
 	execute(&argv[i], fds, argc - i);
 	return (0);
 }
-
 /*
 	env variables
 */
