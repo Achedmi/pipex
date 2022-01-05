@@ -6,13 +6,13 @@
 /*   By: achedmi <achedmi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/18 12:12:58 by achedmi           #+#    #+#             */
-/*   Updated: 2022/01/04 19:02:59 by achedmi          ###   ########.fr       */
+/*   Updated: 2022/01/04 20:38:00 by achedmi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include"pipex.h"
 
-void	childing(int in, int fds[2], char *commande)
+void	childing(int in, int fds[2], char *commande, char **envp)
 {
 	int	fk;
 
@@ -24,13 +24,14 @@ void	childing(int in, int fds[2], char *commande)
 		close(fds[1]);
 		close(in);
 		execve(check_acsess(ft_split(commande, ' ')[0]),
-			ft_split(commande, ' '), NULL);
+			ft_split(commande, ' '), envp);
 		write(2, ft_strjoin("zsh: command not found: ", commande),
 			ft_strlen(ft_strjoin("zsh: command not found: ", commande)));
+		exit(127);
 	}
 }
 
-void	execute(char **argv, int fds[2], int argc)
+void	do_this(char **argv, int fds[2], int argc, char **envp)
 {
 	int		in;
 	int		i;
@@ -44,7 +45,7 @@ void	execute(char **argv, int fds[2], int argc)
 		pipe(fds);
 		if (argv[i + 1] == argv[argc - 1])
 			fds[1] = fd1;
-		childing(in, fds, argv[i]);
+		childing(in, fds, argv[i], envp);
 		wait(NULL);
 		close(fds[1]);
 		close(in);
@@ -98,7 +99,7 @@ int	file_case(char *file_name, int fds[2], int argc)
 	return (2);
 }
 
-int	main(int argc, char **argv)
+int	main(int argc, char **argv, char **envp)
 {
 	int		fds[2];
 	int		i;
@@ -112,9 +113,10 @@ int	main(int argc, char **argv)
 	if (i == -1)
 		return (0);
 	close(fds[1]);
-	execute(&argv[i], fds, argc - i);
+	do_this(&argv[i], fds, argc - i, envp);
 	return (0);
 }
+
 /*
 	env variables
 */
