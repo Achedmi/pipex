@@ -25,20 +25,23 @@ void	childing(int in, int fds[2], char *commande, char **envp)
 		close(in);
 		execve(check_acces(envp, ft_split(commande, ' ')[0]),
 			ft_split(commande, ' '), envp);
-		write(2, ft_strjoin("zsh: command not found: ", commande),
-			ft_strlen(ft_strjoin("zsh: command not found: ", commande)));
+		write(2, ft_strjoin(commande, ": command not found \n"),
+			ft_strlen(ft_strjoin(commande, ": command not found \n")));
 		exit(127);
 	}
 }
 
-void	do_this(char **argv, int fds[2], int argc, char **envp)
+void	exec_commande(char **argv, int fds[2], int argc, char **envp)
 {
 	int		in;
 	int		i;
 	int		fd1;
 
 	i = 0;
-	fd1 = open(argv[argc - 1], O_RDWR | O_TRUNC);
+	if (ft_strncmp(argv[-2], "here_doc", 8) == 0)
+		fd1 = open(argv[argc - 1], O_RDWR | O_APPEND);
+	else
+		fd1 = open(argv[argc - 1], O_RDWR | O_TRUNC);
 	while (argv[i + 1])
 	{
 		in = fds[0];
@@ -112,10 +115,6 @@ int	main(int argc, char **argv, char **envp)
 	if (i == -1)
 		return (0);
 	close(fds[1]);
-	do_this(&argv[i], fds, argc - i, envp);
+	exec_commande(&argv[i], fds, argc - i, envp);
 	return (0);
 }
-
-/*
-	env variables
-*/
