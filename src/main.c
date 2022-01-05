@@ -118,3 +118,6 @@ int	main(int argc, char **argv, char **envp)
 	exec_commande(&argv[i], fds, argc - i, envp);
 	return (0);
 }
+
+//diffrence between execve with NULL and non NULL 
+//check files rules
