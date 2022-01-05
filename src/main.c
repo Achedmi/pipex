@@ -23,7 +23,7 @@ void	childing(int in, int fds[2], char *commande, char **envp)
 		dup2(fds[1], 1);
 		close(fds[1]);
 		close(in);
-		execve(check_acsess(envp, ft_split(commande, ' ')[0]),
+		execve(check_acces(envp, ft_split(commande, ' ')[0]),
 			ft_split(commande, ' '), envp);
 		write(2, ft_strjoin("zsh: command not found: ", commande),
 			ft_strlen(ft_strjoin("zsh: command not found: ", commande)));

@@ -19,7 +19,7 @@
 # include"../needs/libft/libft.h"
 # include"../needs/gnl/get_next_line.h"
 
-char	*check_acsess(char **envp, char *command);
+char	*check_acces(char **envp, char *command);
 void	execute(char **argv, int fds[2], int argc);
 int		here_doc_case(char *limiter, int fds[2]);
 int		ile_case(char *file_name, int fds[2], int argc);

@@ -12,7 +12,7 @@
 
 #include"pipex.h"
 
-char	*check_acsess(char **envp, char *command)
+char	*check_acces(char **envp, char *command)
 {
 	char	*path;
 	int		i;
