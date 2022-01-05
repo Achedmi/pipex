@@ -12,17 +12,27 @@
 
 #include"pipex.h"
 
-char	*check_acsess(char *commande)
+char	*check_acsess(char **envp, char *command)
 {
 	char	*path;
+	int		i;
 
-	path = malloc(9 + ft_strlen(commande) + 1);
-	ft_strlcat(path, "/usr/bin/", ft_strlen("/usr/bin/") + 1);
-	ft_strlcat(path, commande, ft_strlen(commande) + ft_strlen(path) + 1);
-	if (access(&path[4], F_OK) == 0)
-		return (&path[4]);
-	else if (access(path, F_OK) == 0)
-		return (path);
-	free(path);
+	i = 0;
+	while (envp[++i])
+	{
+		if (ft_strncmp(envp[i], "PATH", 4) == 0)
+		{
+			path = &envp[i][5];
+			i = -1;
+			while (ft_split(path, ':')[++i])
+			{
+				if (access(ft_strjoin(ft_strjoin(ft_split(path, ':')[i],
+							"/"), command), F_OK) == 0)
+					return (ft_strjoin(ft_strjoin(ft_split(path, ':')[i],
+							"/"), command));
+			}
+			break ;
+		}
+	}
 	return (NULL);
 }

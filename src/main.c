@@ -23,7 +23,7 @@ void	childing(int in, int fds[2], char *commande, char **envp)
 		dup2(fds[1], 1);
 		close(fds[1]);
 		close(in);
-		execve(check_acsess(ft_split(commande, ' ')[0]),
+		execve(check_acsess(envp, ft_split(commande, ' ')[0]),
 			ft_split(commande, ' '), envp);
 		write(2, ft_strjoin("zsh: command not found: ", commande),
 			ft_strlen(ft_strjoin("zsh: command not found: ", commande)));
@@ -73,12 +73,11 @@ int	here_doc_case(char *limiter, int fds[2])
 	return (3);
 }
 
-int	file_case(char *file_name, int fds[2], int argc)
+int	file_case(char *file_name, int fds[2])
 {
 	char	*line;
 	int		file;
 
-	argc = 5;
 	if (pipe(fds) == -1)
 		return (-1);
 	file = open(file_name, O_RDONLY);
@@ -109,7 +108,7 @@ int	main(int argc, char **argv, char **envp)
 	if (ft_strncmp(argv[1], "here_doc", 8) == 0)
 		i = here_doc_case(argv[2], fds);
 	else
-		i = file_case(argv[1], fds, argc);
+		i = file_case(argv[1], fds);
 	if (i == -1)
 		return (0);
 	close(fds[1]);
