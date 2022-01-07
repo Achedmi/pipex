@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   main_bonus.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: achedmi <achedmi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/18 12:12:58 by achedmi           #+#    #+#             */
-/*   Updated: 2022/01/07 15:37:57 by achedmi          ###   ########.fr       */
+/*   Updated: 2022/01/07 15:36:32 by achedmi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ int	main(int argc, char **argv, char **envp)
 	int		fds[2];
 	int		i;
 
-	if (argc < 4)
+	if (argc < 5)
 	{
 		write(2, "wrong number of args", ft_strlen("wrong number of args"));
 		exit(1);

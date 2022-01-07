@@ -1,29 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_memchr.c                                        :+:      :+:    :+:   */
+/*   pipex_utiles.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: achedmi <achedmi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/11/03 10:16:40 by achedmi           #+#    #+#             */
-/*   Updated: 2021/11/15 15:15:52 by achedmi          ###   ########.fr       */
+/*   Created: 2022/01/03 20:27:04 by achedmi           #+#    #+#             */
+/*   Updated: 2022/01/07 09:06:21 by achedmi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include"libft.h"
+#include"pipex.h"
 
-void	*ft_memchr(const void *s, int c, size_t n)
+char	*check_acces(char **envp, char *command)
 {
-	size_t	i;
-	char	*temp;
+	char	*path;
+	int		i;
 
-	temp = (char *)s;
 	i = 0;
-	while ((i < n))
+	while (envp[++i])
 	{
-		if (temp[i] == (char)c)
-			return (temp + i);
-		i++;
+		if (ft_strncmp(envp[i], "PATH", 4) == 0)
+		{
+			path = &envp[i][5];
+			i = -1;
+			while (ft_split(path, ':')[++i])
+			{
+				if (access(ft_strjoin(ft_strjoin(ft_split(path, ':')[i],
+							"/"), command), F_OK) == 0)
+					return (ft_strjoin(ft_strjoin(ft_split(path, ':')[i],
+							"/"), command));
+			}
+			break ;
+		}
 	}
 	return (NULL);
 }
