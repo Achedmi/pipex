@@ -6,7 +6,7 @@
 /*   By: achedmi <achedmi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/18 12:12:58 by achedmi           #+#    #+#             */
-/*   Updated: 2022/01/04 20:38:00 by achedmi          ###   ########.fr       */
+/*   Updated: 2022/01/07 09:54:05 by achedmi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@ void	childing(int in, int fds[2], char *commande, char **envp)
 			ft_strlen(ft_strjoin(commande, ": command not found \n")));
 		exit(127);
 	}
+	close(fds[1]);
+	close(in);
 }
 
 void	exec_commande(char **argv, int fds[2], int argc, char **envp)
@@ -42,18 +44,19 @@ void	exec_commande(char **argv, int fds[2], int argc, char **envp)
 		fd1 = open(argv[argc - 1], O_RDWR | O_APPEND);
 	else
 		fd1 = open(argv[argc - 1], O_RDWR | O_TRUNC);
-	while (argv[i + 1])
+	if (access(argv[argc - 1], W_OK) == -1)
+		perror("Error ");
+	while (argv[i + 1] && access(argv[argc - 1], W_OK) == 0)
 	{
 		in = fds[0];
 		pipe(fds);
 		if (argv[i + 1] == argv[argc - 1])
 			fds[1] = fd1;
 		childing(in, fds, argv[i], envp);
-		wait(NULL);
-		close(fds[1]);
-		close(in);
 		i++;
 	}
+	while (i--)
+		wait(NULL);
 	close(fds[0]);
 	close(fd1);
 }
@@ -84,9 +87,11 @@ int	file_case(char *file_name, int fds[2])
 	if (pipe(fds) == -1)
 		return (-1);
 	file = open(file_name, O_RDONLY);
-	if (file == -1)
+	if (file == -1 || access(file_name, R_OK) == -1)
 	{
 		perror("Error ");
+		if (access(file_name, R_OK) == -1)
+			return (2);
 		return (-1);
 	}
 	while (1)
@@ -118,6 +123,3 @@ int	main(int argc, char **argv, char **envp)
 	exec_commande(&argv[i], fds, argc - i, envp);
 	return (0);
 }
-
-//diffrence between execve with NULL and non NULL 
-//check files rules
