@@ -6,7 +6,7 @@
 /*   By: achedmi <achedmi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/18 12:12:58 by achedmi           #+#    #+#             */
-/*   Updated: 2022/01/07 09:54:05 by achedmi          ###   ########.fr       */
+/*   Updated: 2022/01/07 12:29:56 by achedmi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,9 +41,9 @@ void	exec_commande(char **argv, int fds[2], int argc, char **envp)
 
 	i = 0;
 	if (ft_strncmp(argv[-2], "here_doc", 8) == 0)
-		fd1 = open(argv[argc - 1], O_RDWR | O_APPEND);
+		fd1 = open(argv[argc - 1], O_WRONLY | O_APPEND | O_CREAT, 0777);
 	else
-		fd1 = open(argv[argc - 1], O_RDWR | O_TRUNC);
+		fd1 = open(argv[argc - 1], O_WRONLY | O_TRUNC | O_CREAT, 0777);
 	if (access(argv[argc - 1], W_OK) == -1)
 		perror("Error ");
 	while (argv[i + 1] && access(argv[argc - 1], W_OK) == 0)
@@ -61,31 +61,27 @@ void	exec_commande(char **argv, int fds[2], int argc, char **envp)
 	close(fd1);
 }
 
-int	here_doc_case(char *limiter, int fds[2])
+int	here_doc_case(char *limiter, int fd)
 {
 	char	*line;
 
-	if (pipe(fds) == -1)
-		return (-1);
 	while (1)
 	{
 		line = get_next_line(0);
 		if (ft_strncmp(line, limiter, ft_strlen(line) - 1) == 0)
 			break ;
-		write(fds[1], line, ft_strlen(line));
+		write(fd, line, ft_strlen(line));
 		free(line);
 	}
 	free(line);
 	return (3);
 }
 
-int	file_case(char *file_name, int fds[2])
+int	file_case(char *file_name, int fd)
 {
 	char	*line;
 	int		file;
 
-	if (pipe(fds) == -1)
-		return (-1);
 	file = open(file_name, O_RDONLY);
 	if (file == -1 || access(file_name, R_OK) == -1)
 	{
@@ -99,7 +95,7 @@ int	file_case(char *file_name, int fds[2])
 		line = get_next_line(file);
 		if (line == NULL)
 			break ;
-		write(fds[1], line, ft_strlen(line));
+		write(fd, line, ft_strlen(line));
 		free(line);
 	}
 	close(file);
@@ -112,11 +108,16 @@ int	main(int argc, char **argv, char **envp)
 	int		i;
 
 	if (argc < 5)
-		return (0);
+	{
+		write(2, "wrong number of args", ft_strlen("wrong number of args"));
+		exit(1);
+	}
+	if (pipe(fds) == -1)
+		return (-1);
 	if (ft_strncmp(argv[1], "here_doc", 8) == 0)
-		i = here_doc_case(argv[2], fds);
+		i = here_doc_case(argv[2], fds[1]);
 	else
-		i = file_case(argv[1], fds);
+		i = file_case(argv[1], fds[1]);
 	if (i == -1)
 		return (0);
 	close(fds[1]);
