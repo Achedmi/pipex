@@ -63,18 +63,9 @@ CFLAGS =	-Wall -Wextra -Werror -g
 
 all	:	${NAME}
 
-bonus : ${NAME_BONUS}
-
-${NAME_BONUS} :	${SRCS_BNS} ${OBJS_BNS}
-	ar -rcs ${NAME_BONUS} ${OBJS_BNS}
-	${CC} ${NAME_BONUS} -o ${PROG}
-
-${NAME} :	${SRCS} ${OBJS}
+${NAME} :	${OBJS} ${SRCS}
 	ar -rcs ${NAME} ${OBJS}
 	${CC} ${NAME} -o ${PROG}
-
-${OBJS_BNS} :
-	${CC} ${CFLAGS} ${SRCS_BNS} -c
 
 ${OBJS} :
 	${CC} ${CFLAGS} ${SRCS} -c
@@ -82,15 +73,25 @@ ${OBJS} :
 clean :
 	rm -f ${OBJS}
 
+fclean : clean
+	rm -f ${PROG} ${NAME}
+
+re : clean fclean all
+
+bonus : ${NAME_BONUS}
+
+${NAME_BONUS} :	${SRCS_BNS} ${OBJS_BNS}
+	ar -rcs ${NAME_BONUS} ${OBJS_BNS}
+	${CC} ${NAME_BONUS} -o ${PROG}
+
+${OBJS_BNS} :
+	${CC} ${CFLAGS} ${SRCS_BNS} -c
+
 clean_b :
 	rm -f ${OBJS_BNS}
 
 fclean_b : clean_b
 	rm -f ${PROG} ${NAME_BONUS}
 
-fclean : clean
-	rm -f ${PROG} ${NAME}
 
 re_b : clean_b fclean_b bonus
-
-re : clean fclean all
