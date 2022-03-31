@@ -85,3 +85,10 @@ fclean_bonus: clean_bonus
 
 clean_bonus:
 	rm -rf ${BONUS_OBJS_DIRETORY}
+
+
+test1:
+	./pipex txt.txt ls ls txt7.txt
+
+test2:
+	./pipex txt.txt ls ls ls ls txt7.txt
