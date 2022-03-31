@@ -3,14 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: achedmi <achedmi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: scratch <scratch@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/28 04:08:40 by achedmi           #+#    #+#             */
-/*   Updated: 2021/11/28 23:02:49 by achedmi          ###   ########.fr       */
+/*   Updated: 2022/03/11 12:05:36 by scratch          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include"../libft/libft.h"
 #include"get_next_line.h"
 
 int	has_next_line(char *str)

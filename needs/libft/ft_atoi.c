@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_atoi.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: achedmi <achedmi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: scratch <scratch@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/03 18:21:53 by achedmi           #+#    #+#             */
-/*   Updated: 2021/11/16 18:32:43 by achedmi          ###   ########.fr       */
+/*   Updated: 2022/03/12 18:58:06 by scratch          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,16 +26,16 @@ int	ft_atoi(const char *str)
 	if (str[i] == '+' || str[i] == '-')
 		if (str[i++] == '-')
 			sign = -1;
-	while (ft_isdigit(str[i]))
+	while (str[i])
 	{
-		res = (res * 10) + (str[i++] - '0');
-		if (res > 2147483648)
+		res = (res * 10) + (str[i] - '0');
+		if ((res > 2147483647 && sign == 1)
+			|| (res > 2147483648 && sign == -1) || ft_isdigit(str[i]) == 0)
 		{
-			if (sign > 0)
-				return (-1);
-			else
-				return (0);
+			write(2, "Error\n", 6);
+			exit(1);
 		}
+		i++;
 	}
 	return (res * sign);
 }

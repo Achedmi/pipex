@@ -1,97 +1,87 @@
-NAME =	pipex.a
-SRCS =	src/main.c\
-		src/pipex_utiles.c\
-		needs/gnl/get_next_line.c\
-		needs/libft/ft_strlen.c\
-		needs/libft/ft_strlcat.c\
-		needs/libft/ft_split.c\
-		needs/libft/ft_substr.c\
-		needs/libft/ft_strjoin.c\
-		needs/libft/ft_calloc.c\
-		needs/libft/ft_strlcpy.c\
-		needs/libft/ft_bzero.c\
-		needs/libft/ft_memmove.c\
-		needs/libft/ft_strncmp.c
+VPATH= mandatory_objects mandatory bonus bonus_objects
+CFLAGS = -Wall -Wextra -Werror -g
+CC = cc
+NAME = pipex.a
+PROG = pipex
+MANDATORY_OBJS_PATH=./mandatory_objects/
+MANDATORY_OBJS_DIRETORY=mandatory_objects
 
-SRCS_BNS =	src/main_bonus.c\
-		src/pipex_utiles_bonus.c\
-		needs/gnl/get_next_line.c\
-		needs/libft/ft_strlen.c\
-		needs/libft/ft_strlcat.c\
-		needs/libft/ft_split.c\
-		needs/libft/ft_substr.c\
-		needs/libft/ft_strjoin.c\
-		needs/libft/ft_calloc.c\
-		needs/libft/ft_strlcpy.c\
-		needs/libft/ft_bzero.c\
-		needs/libft/ft_memmove.c\
-		needs/libft/ft_strncmp.c
+MANDATORY_SRCS= pipex.c\
+				pipex_utiles.c
 
-OBJS =	main.o\
-		pipex_utiles.o\
-		get_next_line.o\
-		ft_strlen.o\
-		ft_strlcat.o\
-		ft_split.o\
-		ft_substr.o\
-		ft_strjoin.o\
-		ft_calloc.o\
-		ft_strlcpy.o\
-		ft_bzero.o\
-		ft_memmove.o\
-		ft_strncmp.o
+MANDATORY_OBJS= pipex.o\
+				pipex_utiles.o
 
-OBJS_BNS =	main_bonus.o\
-		pipex_utiles_bonus.o\
-		get_next_line.o\
-		ft_strlen.o\
-		ft_strlcat.o\
-		ft_split.o\
-		ft_substr.o\
-		ft_strjoin.o\
-		ft_calloc.o\
-		ft_strlcpy.o\
-		ft_bzero.o\
-		ft_memmove.o\
-		ft_strncmp.o
+MANDATORY_HEADER= pipex.h
 
-NAME =	pipex.a
-NAME_BONUS = pipex_bonus.a
-PROG =	pipex
-CC =	gcc
-CFLAGS =	-Wall -Wextra -Werror -g
+all:${MANDATORY_OBJS_DIRETORY} ${NAME}
 
-all	:	${NAME}
+${NAME}: ${MANDATORY_OBJS} ${MANDATORY_SRCS}
+	@make -C ./needs/libft
+	@make clean -C ./needs/libft
+	@mv ./needs/libft/libft.a ./
+	@make -C ./needs/gnl
+	@make clean -C ./needs/gnl
+	@mv ./needs/gnl/get_next_line.a ./
+	ar -rcs ${NAME} $(addprefix ${MANDATORY_OBJS_PATH},${MANDATORY_OBJS})
+	${CC} ${NAME} get_next_line.a libft.a -o ${PROG}
 
-${NAME} :	${OBJS} ${SRCS}
-	ar -rcs ${NAME} ${OBJS}
-	${CC} ${NAME} -o ${PROG}
+%.o : ./mandatory/%.c $(MANDATORY_HEADER)
+	${CC} ${CFLAGS} -c $< -o ${MANDATORY_OBJS_PATH}$@
 
-${OBJS} :
-	${CC} ${CFLAGS} ${SRCS} -c
+${MANDATORY_OBJS_DIRETORY}: 
+	mkdir -p $@
 
-clean :
-	rm -f ${OBJS}
+re: fclean all
 
-fclean : clean
-	rm -f ${PROG} ${NAME}
+fclean: clean
+	rm -rf *.a pipex
+	@make clean -C ./needs/libft
+	@make clean -C ./needs/gnl
 
-re : clean fclean all
+clean:
+	rm -rf ${MANDATORY_OBJS_DIRETORY}
 
-bonus : ${NAME_BONUS}
+#-------------------------------------------------------------------------#
+#								Bonus Part								  #
+#-------------------------------------------------------------------------#
 
-${NAME_BONUS} :	${SRCS_BNS} ${OBJS_BNS}
-	ar -rcs ${NAME_BONUS} ${OBJS_BNS}
-	${CC} ${NAME_BONUS} -o ${PROG}
+BONUS_SRCS= pipex_bonus.c\
+				pipex_utiles_bonus.c
 
-${OBJS_BNS} :
-	${CC} ${CFLAGS} ${SRCS_BNS} -c
+BONUS_OBJS= pipex_bonus.o\
+				pipex_utiles_bonus.o
 
-clean_b :
-	rm -f ${OBJS_BNS}
+NAME_BONUS= pipex_bonus.a
+PROG_BONUS= checker
+BONUS_HEADER= pipex_bonus.h
+BONUS_OBJS_PATH=./bonus_objects/
+BONUS_OBJS_DIRETORY=bonus_objects
 
-fclean_b : clean_b
-	rm -f ${PROG} ${NAME_BONUS}
+bonus: ${BONUS_OBJS_DIRETORY} ${NAME_BONUS}
 
+${NAME_BONUS}: ${BONUS_OBJS} ${BONUS_SRCS}
+	@make -C ./needs/libft
+	@make clean -C ./needs/libft
+	@mv ./needs/libft/libft.a ./
+	@make -C ./needs/gnl
+	@make clean -C ./needs/gnl
+	@mv ./needs/gnl/get_next_line.a ./
+	ar -rcs ${NAME_BONUS} $(addprefix ${BONUS_OBJS_PATH},${BONUS_OBJS})
+	${CC} ${NAME_BONUS} get_next_line.a libft.a -o ${PROG_BONUS}	
 
-re_b : clean_b fclean_b bonus
+%.o: ./bonus/%.c ${BONUS_HEADER}
+	${CC} ${CFLAGS} -c $< -o ${BONUS_OBJS_PATH}$@
+
+${BONUS_OBJS_DIRETORY}:
+	mkdir -p $@
+
+re_bonus: fclean_bonus bonus
+
+fclean_bonus: clean_bonus
+	rm -rf *.a ${PROG_BONUS}
+	@make clean -C ./needs/libft
+	@make clean -C ./needs/gnl
+
+clean_bonus:
+	rm -rf ${BONUS_OBJS_DIRETORY}
