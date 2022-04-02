@@ -6,7 +6,7 @@
 /*   By: achedmi <achedmi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/03 20:22:37 by achedmi           #+#    #+#             */
-/*   Updated: 2022/01/07 09:06:27 by achedmi          ###   ########.fr       */
+/*   Updated: 2022/04/02 18:23:59 by achedmi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,5 +19,4 @@
 # include"../needs/libft/libft.h"
 # include"../needs/gnl/get_next_line.h"
 
-char	*check_acces(char **envp, char *command);
 #endif

@@ -1,0 +1,14 @@
+Makefile
+README.md
+bonus
+bonus_objects
+get_next_line.a
+libft.a
+mandatory
+mandatory_objects
+needs
+pipex
+pipex.a
+pipex_bonus
+txt.txt
+txt7.txt

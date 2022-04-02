@@ -6,11 +6,9 @@ PROG = pipex
 MANDATORY_OBJS_PATH=./mandatory_objects/
 MANDATORY_OBJS_DIRETORY=mandatory_objects
 
-MANDATORY_SRCS= pipex.c\
-				pipex_utiles.c
+MANDATORY_SRCS= pipex.c
 
-MANDATORY_OBJS= pipex.o\
-				pipex_utiles.o
+MANDATORY_OBJS= pipex.o
 
 MANDATORY_HEADER= pipex.h
 
