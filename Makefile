@@ -53,7 +53,7 @@ BONUS_OBJS= pipex_bonus.o\
 				pipex_utiles_bonus.o
 
 NAME_BONUS= pipex_bonus.a
-PROG_BONUS= checker
+PROG_BONUS= pipex_bonus
 BONUS_HEADER= pipex_bonus.h
 BONUS_OBJS_PATH=./bonus_objects/
 BONUS_OBJS_DIRETORY=bonus_objects
