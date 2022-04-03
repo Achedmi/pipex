@@ -7,8 +7,10 @@ libft.a
 mandatory
 mandatory_objects
 needs
+out
 pipex
 pipex.a
 pipex_bonus
+pipex_bonus.a
 txt.txt
 txt7.txt
