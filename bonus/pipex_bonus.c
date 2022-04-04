@@ -6,15 +6,15 @@
 /*   By: achedmi <achedmi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/18 12:12:58 by achedmi           #+#    #+#             */
-/*   Updated: 2022/04/04 03:53:16 by achedmi          ###   ########.fr       */
+/*   Updated: 2022/04/04 23:09:29 by achedmi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex_bonus.h"
 
-// void	childing(int in, int fds[2], char *commande, char **envp)
+// void childing(int in, int fds[2], char *commande, char **envp)
 // {
-// 	int	fk;
+// 	int fk;
 
 // 	fk = fork();
 // 	if (fk == 0)
@@ -24,20 +24,20 @@
 // 		close(fds[1]);
 // 		close(in);
 // 		execve(check_acces(envp, ft_split(commande, ' ')[0]),
-// 			ft_split(commande, ' '), envp);
+// 			   ft_split(commande, ' '), envp);
 // 		write(2, ft_strjoin(commande, ": command not found \n"),
-// 			ft_strlen(ft_strjoin(commande, ": command not found \n")));
+// 			  ft_strlen(ft_strjoin(commande, ": command not found \n")));
 // 		exit(127);
 // 	}
 // 	close(fds[1]);
 // 	close(in);
 // }
 
-// void	exec_commande(char **argv, int fds[2], int argc, char **envp)
+// void exec_commande(char **argv, int fds[2], int argc, char **envp)
 // {
-// 	int		in;
-// 	int		i;
-// 	int		fd1;
+// 	int in;
+// 	int i;
+// 	int fd1;
 
 // 	i = 0;
 // 	if (ft_strncmp(argv[-2], "here_doc", 8) == 0)
@@ -61,15 +61,15 @@
 // 	close(fd1);
 // }
 
-// int	here_doc_case(char *limiter, int fd)
+// int here_doc_case(char *limiter, int fd)
 // {
-// 	char	*line;
+// 	char *line;
 
 // 	while (1)
 // 	{
 // 		line = get_next_line(0);
 // 		if (ft_strncmp(line, limiter, ft_strlen(line) - 1) == 0)
-// 			break ;
+// 			break;
 // 		write(fd, line, ft_strlen(line));
 // 		free(line);
 // 	}
@@ -77,10 +77,10 @@
 // 	return (3);
 // }
 
-// int	file_case(char *file_name, int fd)
+// int file_case(char *file_name, int fd)
 // {
-// 	char	*line;
-// 	int		file;
+// 	char *line;
+// 	int file;
 
 // 	file = open(file_name, O_RDONLY);
 // 	if (file == -1 || access(file_name, R_OK) == -1)
@@ -94,7 +94,7 @@
 // 	{
 // 		line = get_next_line(file);
 // 		if (line == NULL)
-// 			break ;
+// 			break;
 // 		write(fd, line, ft_strlen(line));
 // 		free(line);
 // 	}
@@ -102,10 +102,10 @@
 // 	return (2);
 // }
 
-// int	main(int argc, char **argv, char **envp)
+// int main(int argc, char **argv, char **envp)
 // {
-// 	int		fds[2];
-// 	int		i;
+// 	int fds[2];
+// 	int i;
 
 // 	if (argc < 5)
 // 	{
@@ -125,12 +125,6 @@
 // 	return (0);
 // }
 
-// struct s_pipe
-// {
-// 	int in;
-// 	int out;
-// };
-
 struct s_data
 {
 	int files[2];
@@ -141,7 +135,7 @@ struct s_data
 	int *id;
 };
 
-int here_doc_case(char *limiter, int fd)
+int here_docing(char *limiter, int fd)
 {
 	char *line;
 
@@ -164,7 +158,7 @@ int open_file1(struct s_data *data)
 	{
 		perror("Error ");
 		if (access(data->argv[1], R_OK) == -1)
-			return (2);
+			return (3);
 		exit(1);
 	}
 	return (2);
@@ -172,25 +166,15 @@ int open_file1(struct s_data *data)
 
 void open_last_file(struct s_data *data)
 {
-	data->files[1] = open(data->argv[4], O_WRONLY | O_TRUNC | O_CREAT, 0777);
-	if (access(data->argv[4], W_OK) == -1)
+	if (ft_strncmp(data->argv[1], "here_doc", 8) == 0)
+		data->files[1] = open(data->argv[data->argc - 1], O_WRONLY | O_APPEND | O_CREAT, 0777);
+	else
+		data->files[1] = open(data->argv[data->argc - 1], O_WRONLY | O_TRUNC | O_CREAT, 0777);
+	if (access(data->argv[data->argc - 1], W_OK) == -1)
 	{
 		perror("Error ");
 		exit(1);
 	}
-}
-
-void executing(struct s_data *data, int in, char *commande)
-{
-	dup2(in, 0);
-	dup2(data->fds[1], 1);
-	close(data->fds[0]);
-	close(data->fds[1]);
-	execve(check_acces(data->envp, ft_split(commande, ' ')[0]),
-		   ft_split(commande, ' '), data->envp);
-	write(2, ft_strjoin(commande, ": command not found \n"),
-		  ft_strlen(ft_strjoin(commande, ": command not found \n")));
-	exit(0);
 }
 
 int open_files(struct s_data *data)
@@ -199,20 +183,50 @@ int open_files(struct s_data *data)
 
 	if (ft_strncmp(data->argv[1], "here_doc", 8) == 0)
 	{
-		i = here_doc_case(data->argv[2], data->fds[1]);
-		data->files[0] = data->fds[0];
+		i = here_docing(data->argv[2], data->fds[1]);
+		// data->files[0] = data->fds[0];
 	}
 	else
+	{
 		i = open_file1(data);
+		if (i == 2)
+		{
+			close(data->fds[0]);
+			data->fds[0] = data->files[0];
+		}
+		}
 	open_last_file(data);
 	return (i);
 }
 
-void cloing(int fd1, int tmp_in, int j)
+void executing(struct s_data *data, int in, char *commande)
 {
-	close(fd1);
-	if (j != 0)
-		close(tmp_in);
+	dup2(in, 0);
+	dup2(data->fds[1], 1);
+	close(data->fds[0]);
+	close(data->fds[1]);
+	close(in);
+	execve(check_acces(data->envp, ft_split(commande, ' ')[0]),
+		   ft_split(commande, ' '), data->envp);
+	write(2, ft_strjoin(commande, ": command not found \n"),
+		  ft_strlen(ft_strjoin(commande, ": command not found \n")));
+	exit(0);
+}
+
+void to_execute(struct s_data *data, int *i, int *j, int *tmp_in)
+{
+	if (*i == data->argc - 2)
+		data->fds[1] = data->files[1];
+	if (*i < data->argc - 2)
+		if (pipe(data->fds) == -1)
+			exit(1);
+	data->id[*j] = fork();
+	if (data->id[(*j)++] == 0)
+		executing(data, *tmp_in, data->argv[(*i)]);
+	close(*tmp_in);
+	close(data->fds[1]);
+	*tmp_in = data->fds[0];
+	(*i)++;
 }
 
 void forking(struct s_data *data)
@@ -223,25 +237,14 @@ void forking(struct s_data *data)
 
 	i = open_files(data);
 	data->id = malloc(sizeof(int) * (data->argc - (i + 1)));
-	tmp_in = data->files[0];
-	j = -1;
+	// tmp_in = data->files[0];
+	tmp_in = data->fds[0];
+	j = 0;
+	close(data->fds[1]);
 	while (data->argv[i + 1])
-	{
-		if (i == data->argc - 2)
-			data->fds[1] = data->files[1];
-		data->id[++j] = fork();
-		if (data->id[j] == 0)
-			executing(data, tmp_in, data->argv[i]);
-		cloing(data->fds[1], tmp_in, j);
-		tmp_in = data->fds[0];
-		if (i++ < data->argc - 2)
-			if (pipe(data->fds) == -1)
-				exit(1);
-	}
-	while (j-- > 0)
+		to_execute(data, &i, &j, &tmp_in);
+	while (j--)
 		waitpid(data->id[j], NULL, 0);
-	close(data->files[0]);
-	close(data->files[1]);
 	free(data->id);
 }
 
@@ -263,3 +266,5 @@ int main(int argc, char **argv, char **envp)
 		exit(1);
 	forking(data);
 }
+
+// handle commande path :/usr/bin/awk

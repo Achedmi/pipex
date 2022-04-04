@@ -6,7 +6,7 @@
 /*   By: achedmi <achedmi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/18 12:12:58 by achedmi           #+#    #+#             */
-/*   Updated: 2022/04/04 03:14:07 by achedmi          ###   ########.fr       */
+/*   Updated: 2022/04/04 23:38:45 by achedmi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,39 +27,40 @@ char *check_acces(char **envp, char *command)
 	int i;
 
 	i = 0;
-	while (envp[++i])
-	{
-		if (ft_strncmp(envp[i], "PATH", 4) == 0)
+	if (access(command, F_OK) == 0)
+		return (command);
+	else
+		while (envp[++i])
 		{
-			path = &envp[i][5];
-			i = -1;
-			while (ft_split(path, ':')[++i])
+			if (ft_strncmp(envp[i], "PATH", 4) == 0)
 			{
-				if (access(ft_strjoin(ft_strjoin(ft_split(path, ':')[i],
-												 "/"),
-									  command),
-						   F_OK) == 0)
-					return (ft_strjoin(ft_strjoin(ft_split(path, ':')[i],
-												  "/"),
-									   command));
+				path = &envp[i][5];
+				i = -1;
+				while (ft_split(path, ':')[++i])
+				{
+					if (access(ft_strjoin(ft_strjoin(ft_split(path, ':')[i],
+													 "/"),
+										  command),
+							   F_OK) == 0)
+						return (ft_strjoin(ft_strjoin(ft_split(path, ':')[i],
+													  "/"),
+										   command));
+				}
+				break;
 			}
-			break;
 		}
-	}
 	return (NULL);
 }
 
-int open_file1(struct s_data *data)
+void open_file1(struct s_data *data)
 {
 	data->files[0] = open(data->argv[1], O_RDONLY);
 	if (data->files[0] == -1 || access(data->argv[1], R_OK) == -1)
 	{
 		perror("Error ");
 		if (access(data->argv[1], R_OK) == -1)
-			return (2);
-		exit(1);
+			exit(1);
 	}
-	return (2);
 }
 
 void open_last_file(struct s_data *data)
@@ -72,12 +73,14 @@ void open_last_file(struct s_data *data)
 	}
 }
 
-void open_files(struct s_data *data)
-{
-	open_file1(data);
+// int open_files(struct s_data *data)
+// {
+// 	int i;
+// 	i = open_file1(data);
 
-	open_last_file(data);
-}
+// 	open_last_file(data);
+// 	return (i);
+// }
 
 void executing(struct s_data *data, int in, int out, char *commande)
 {
@@ -96,21 +99,26 @@ void forking(struct s_data *data)
 {
 	int id;
 	int id2;
+	// int i;
 
-	open_files(data);
+	// i = open_files(data);
 	id = fork();
 	if (id == 0)
+	{
+		open_file1(data);
 		executing(data, data->files[0], data->fds[1], data->argv[2]);
+	}
 	id2 = fork();
 	if (id2 == 0)
+	{
+		open_last_file(data);
 		executing(data, data->fds[0], data->files[1], data->argv[3]);
+	}
 
 	close(data->fds[1]);
 	close(data->fds[0]);
 	waitpid(id, NULL, 0);
 	waitpid(id2, NULL, 0);
-	close(data->files[1]);
-	close(data->files[0]);
 }
 
 int main(int argc, char **argv, char **envp)
@@ -131,5 +139,3 @@ int main(int argc, char **argv, char **envp)
 		exit(1);
 	forking(data);
 }
-
-// handle commande path :/usr/bin/awk
