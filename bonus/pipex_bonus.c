@@ -6,7 +6,7 @@
 /*   By: achedmi <achedmi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/18 12:12:58 by achedmi           #+#    #+#             */
-/*   Updated: 2022/04/03 01:35:14 by achedmi          ###   ########.fr       */
+/*   Updated: 2022/04/04 03:48:49 by achedmi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,6 +131,15 @@
 // 	int out;
 // };
 
+struct s_data
+{
+	int files[2];
+	int fds[2];
+	int argc;
+	char **argv;
+	char **envp;
+};
+
 int here_doc_case(char *limiter, int fd)
 {
 	char *line;
@@ -147,101 +156,111 @@ int here_doc_case(char *limiter, int fd)
 	return (3);
 }
 
-int open_file1(char *file_name, int *files)
+int open_file1(struct s_data *data)
 {
-	files[0] = open(file_name, O_RDONLY);
-	if (files[0] == -1 || access(file_name, R_OK) == -1)
+	data->files[0] = open(data->argv[1], O_RDONLY);
+	if (data->files[0] == -1 || access(data->argv[1], R_OK) == -1)
 	{
 		perror("Error ");
-		if (access(file_name, R_OK) == -1)
+		if (access(data->argv[1], R_OK) == -1)
 			return (2);
 		exit(1);
 	}
 	return (2);
 }
 
-void open_last_file(char *file_name, int *files)
+void open_last_file(struct s_data *data)
 {
-	files[1] = open(file_name, O_WRONLY | O_TRUNC | O_CREAT, 0777);
-	if (access(file_name, W_OK) == -1)
+	data->files[1] = open(data->argv[4], O_WRONLY | O_TRUNC | O_CREAT, 0777);
+	if (access(data->argv[4], W_OK) == -1)
 	{
 		perror("Error ");
 		exit(1);
 	}
 }
 
-void executing(int in, int out, char *commande, char **envp)
+void executing(struct s_data *data, int in, char *commande)
 {
 	dup2(in, 0);
-	dup2(out, 1);
-	close(in);
-	close(out);
-	execve(check_acces(envp, ft_split(commande, ' ')[0]),
-		   ft_split(commande, ' '), envp);
+	dup2(data->fds[1], 1);
+	close(data->fds[0]);
+	close(data->fds[1]);
+	execve(check_acces(data->envp, ft_split(commande, ' ')[0]),
+		   ft_split(commande, ' '), data->envp);
 	write(2, ft_strjoin(commande, ": command not found \n"),
 		  ft_strlen(ft_strjoin(commande, ": command not found \n")));
 	exit(0);
 }
 
-int open_files(int argc, char **argv, int *fds, int *files)
+int open_files(struct s_data *data)
 {
 	int i;
 
-	if (ft_strncmp(argv[1], "here_doc", 8) == 0)
+	if (ft_strncmp(data->argv[1], "here_doc", 8) == 0)
 	{
-		i = here_doc_case(argv[2], fds[1]);
-		files[0] = fds[0];
+		i = here_doc_case(data->argv[2], data->fds[1]);
+		data->files[0] = data->fds[0];
 	}
 	else
-		i = open_file1(argv[1], files);
-	open_last_file(argv[argc - 1], files);
+		i = open_file1(data);
+	open_last_file(data);
 	return (i);
 }
 
-void forking(int *fds, char **argv, int argc, char **envp)
+void cloing(int fd1, int tmp_in, int j)
+{
+	close(fd1);
+	if (j != 0)
+		close(tmp_in);
+}
+
+void forking(struct s_data *data)
 {
 	int *id;
-	int files[2];
 	int i;
-	int tmp_in;
 	int j;
+	int tmp_in;
 
-	i = open_files(argc, argv, fds, files);
-	id = malloc(sizeof(int) * (argc - (i + 1)));
-	tmp_in = files[0];
+	i = open_files(data);
+	id = malloc(sizeof(int) * (data->argc - (i + 1)));
+	tmp_in = data->files[0];
 	j = 0;
-	while (argv[i + 1])
+	while (data->argv[i + 1])
 	{
-		if (i == argc - 2)
-			fds[1] = files[1];
+		if (i == data->argc - 2)
+			data->fds[1] = data->files[1];
 		id[j] = fork();
 		if (id[j] == 0)
-			executing(tmp_in, fds[1], argv[i], envp);
-		close(fds[1]);
-		if (j != 0)
-			close(tmp_in);
-		tmp_in = fds[0];
-		if (i < argc - 2)
-			if (pipe(fds) == -1)
+			executing(data, tmp_in, data->argv[i]);
+		cloing(data->fds[1], tmp_in, j);
+		tmp_in = data->fds[0];
+		if (i++ < data->argc - 2)
+			if (pipe(data->fds) == -1)
 				exit(1);
-		i++;
 		j++;
 	}
-
 	while (j--)
 		waitpid(id[j], NULL, 0);
+	close(data->files[0]);
+	close(data->files[1]);
+	free(id);
 }
 
 int main(int argc, char **argv, char **envp)
 {
-	int fds[2];
+	struct s_data *data;
+
+	data = malloc(sizeof(struct s_data));
+	data->argc = argc;
+	data->argv = argv;
+	data->envp = envp;
 
 	if (argc < 5)
 	{
 		write(2, "wrong number of args", ft_strlen("wrong number of args"));
 		exit(1);
 	}
-	if (pipe(fds) == -1)
+	if (pipe(data->fds) == -1)
 		exit(1);
-	forking(fds, argv, argc, envp);
+	forking(data);
 }

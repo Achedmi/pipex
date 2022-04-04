@@ -6,11 +6,20 @@
 /*   By: achedmi <achedmi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/18 12:12:58 by achedmi           #+#    #+#             */
-/*   Updated: 2022/04/03 03:00:31 by achedmi          ###   ########.fr       */
+/*   Updated: 2022/04/04 03:14:07 by achedmi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
+
+struct s_data
+{
+	int files[2];
+	int fds[2];
+	int argc;
+	char **argv;
+	char **envp;
+};
 
 char *check_acces(char **envp, char *command)
 {
@@ -40,79 +49,87 @@ char *check_acces(char **envp, char *command)
 	return (NULL);
 }
 
-int open_file1(char *file_name, int *files)
+int open_file1(struct s_data *data)
 {
-	files[0] = open(file_name, O_RDONLY);
-	if (files[0] == -1 || access(file_name, R_OK) == -1)
+	data->files[0] = open(data->argv[1], O_RDONLY);
+	if (data->files[0] == -1 || access(data->argv[1], R_OK) == -1)
 	{
 		perror("Error ");
-		if (access(file_name, R_OK) == -1)
+		if (access(data->argv[1], R_OK) == -1)
 			return (2);
 		exit(1);
 	}
 	return (2);
 }
 
-void open_last_file(char *file_name, int *files)
+void open_last_file(struct s_data *data)
 {
-	files[1] = open(file_name, O_WRONLY | O_TRUNC | O_CREAT, 0777);
-	if (access(file_name, W_OK) == -1)
+	data->files[1] = open(data->argv[4], O_WRONLY | O_TRUNC | O_CREAT, 0777);
+	if (access(data->argv[4], W_OK) == -1)
 	{
 		perror("Error ");
 		exit(1);
 	}
 }
 
-void open_files(char **argv, int *files)
+void open_files(struct s_data *data)
 {
-	open_file1(argv[1], files);
-	open_last_file(argv[4], files);
+	open_file1(data);
+
+	open_last_file(data);
 }
 
-void executing(int in, int out, char *commande, char **envp)
+void executing(struct s_data *data, int in, int out, char *commande)
 {
 	dup2(in, 0);
 	dup2(out, 1);
-	close(in);
-	close(out);
-	execve(check_acces(envp, ft_split(commande, ' ')[0]),
-		   ft_split(commande, ' '), envp);
+	close(data->fds[1]);
+	close(data->fds[0]);
+	execve(check_acces(data->envp, ft_split(commande, ' ')[0]),
+		   ft_split(commande, ' '), data->envp);
 	write(2, ft_strjoin(commande, ": command not found \n"),
 		  ft_strlen(ft_strjoin(commande, ": command not found \n")));
 	exit(0);
 }
 
-void forking(int *fds, char **argv, char **envp)
+void forking(struct s_data *data)
 {
 	int id;
 	int id2;
-	int files[2];
 
-	open_files(argv, files);
+	open_files(data);
 	id = fork();
 	if (id == 0)
-		executing(files[0], fds[1], argv[2], envp);
-	close(fds[1]);
-	close(files[0]);
+		executing(data, data->files[0], data->fds[1], data->argv[2]);
 	id2 = fork();
 	if (id2 == 0)
-		executing(fds[0], files[1], argv[3], envp);
-	close(fds[0]);
-	close(files[1]);
+		executing(data, data->fds[0], data->files[1], data->argv[3]);
+
+	close(data->fds[1]);
+	close(data->fds[0]);
 	waitpid(id, NULL, 0);
 	waitpid(id2, NULL, 0);
+	close(data->files[1]);
+	close(data->files[0]);
 }
 
 int main(int argc, char **argv, char **envp)
 {
-	int fds[2];
+	struct s_data *data;
+
+	data = malloc(sizeof(struct s_data));
+	data->argc = argc;
+	data->argv = argv;
+	data->envp = envp;
 
 	if (argc != 5)
 	{
 		write(2, "wrong number of args", ft_strlen("wrong number of args"));
 		exit(1);
 	}
-	if (pipe(fds) == -1)
+	if (pipe(data->fds) == -1)
 		exit(1);
-	forking(fds, argv, envp);
+	forking(data);
 }
+
+// handle commande path :/usr/bin/awk
