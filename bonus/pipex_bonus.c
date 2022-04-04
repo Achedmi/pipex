@@ -6,7 +6,7 @@
 /*   By: achedmi <achedmi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/18 12:12:58 by achedmi           #+#    #+#             */
-/*   Updated: 2022/04/04 03:48:49 by achedmi          ###   ########.fr       */
+/*   Updated: 2022/04/04 03:53:16 by achedmi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,6 +138,7 @@ struct s_data
 	int argc;
 	char **argv;
 	char **envp;
+	int *id;
 };
 
 int here_doc_case(char *limiter, int fd)
@@ -216,34 +217,32 @@ void cloing(int fd1, int tmp_in, int j)
 
 void forking(struct s_data *data)
 {
-	int *id;
 	int i;
 	int j;
 	int tmp_in;
 
 	i = open_files(data);
-	id = malloc(sizeof(int) * (data->argc - (i + 1)));
+	data->id = malloc(sizeof(int) * (data->argc - (i + 1)));
 	tmp_in = data->files[0];
-	j = 0;
+	j = -1;
 	while (data->argv[i + 1])
 	{
 		if (i == data->argc - 2)
 			data->fds[1] = data->files[1];
-		id[j] = fork();
-		if (id[j] == 0)
+		data->id[++j] = fork();
+		if (data->id[j] == 0)
 			executing(data, tmp_in, data->argv[i]);
 		cloing(data->fds[1], tmp_in, j);
 		tmp_in = data->fds[0];
 		if (i++ < data->argc - 2)
 			if (pipe(data->fds) == -1)
 				exit(1);
-		j++;
 	}
-	while (j--)
-		waitpid(id[j], NULL, 0);
+	while (j-- > 0)
+		waitpid(data->id[j], NULL, 0);
 	close(data->files[0]);
 	close(data->files[1]);
-	free(id);
+	free(data->id);
 }
 
 int main(int argc, char **argv, char **envp)
