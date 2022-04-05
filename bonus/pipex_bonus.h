@@ -6,7 +6,7 @@
 /*   By: achedmi <achedmi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/03 20:22:37 by achedmi           #+#    #+#             */
-/*   Updated: 2022/01/07 15:38:17 by achedmi          ###   ########.fr       */
+/*   Updated: 2022/04/05 14:22:56 by achedmi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,4 +20,8 @@
 # include"../needs/gnl/get_next_line.h"
 
 char	*check_acces(char **envp, char *command);
+int		open_file1(struct s_data *data);
+void	open_last_file(struct s_data *data);
+int		open_files(struct s_data *data);
+
 #endif
