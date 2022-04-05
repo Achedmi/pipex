@@ -6,11 +6,12 @@
 /*   By: achedmi <achedmi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/18 12:12:58 by achedmi           #+#    #+#             */
-/*   Updated: 2022/04/04 23:09:29 by achedmi          ###   ########.fr       */
+/*   Updated: 2022/04/05 02:14:22 by achedmi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex_bonus.h"
+#include <errno.h>
 
 // void childing(int in, int fds[2], char *commande, char **envp)
 // {
@@ -194,7 +195,7 @@ int open_files(struct s_data *data)
 			close(data->fds[0]);
 			data->fds[0] = data->files[0];
 		}
-		}
+	}
 	open_last_file(data);
 	return (i);
 }
@@ -208,8 +209,10 @@ void executing(struct s_data *data, int in, char *commande)
 	close(in);
 	execve(check_acces(data->envp, ft_split(commande, ' ')[0]),
 		   ft_split(commande, ' '), data->envp);
-	write(2, ft_strjoin(commande, ": command not found \n"),
-		  ft_strlen(ft_strjoin(commande, ": command not found \n")));
+	// write(2, ft_strjoin(commande, ": command not found \n"),
+	// 	  ft_strlen(ft_strjoin(commande, ": command not found \n")));
+	write(2, ft_strjoin(strerror(errno), "\n"), ft_strlen(ft_strjoin(strerror(errno), "\n")));
+
 	exit(0);
 }
 

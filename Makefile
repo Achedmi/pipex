@@ -2,7 +2,7 @@ VPATH= mandatory_objects mandatory bonus bonus_objects
 CFLAGS = -Wall -Wextra -Werror -g
 CC = cc
 NAME = pipex.a
-PROG = pipex
+PROG = pipexz
 MANDATORY_OBJS_PATH=./mandatory_objects/
 MANDATORY_OBJS_DIRETORY=mandatory_objects
 
@@ -51,7 +51,7 @@ BONUS_OBJS= pipex_bonus.o\
 				pipex_utiles_bonus.o
 
 NAME_BONUS= pipex_bonus.a
-PROG_BONUS= pipex_bonus
+PROG_BONUS= pipex
 BONUS_HEADER= pipex_bonus.h
 BONUS_OBJS_PATH=./bonus_objects/
 BONUS_OBJS_DIRETORY=bonus_objects

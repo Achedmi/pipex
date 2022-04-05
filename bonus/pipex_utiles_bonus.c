@@ -6,18 +6,46 @@
 /*   By: achedmi <achedmi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/03 20:27:04 by achedmi           #+#    #+#             */
-/*   Updated: 2022/03/31 17:26:09 by achedmi          ###   ########.fr       */
+/*   Updated: 2022/04/05 01:48:03 by achedmi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include"pipex_bonus.h"
+#include "pipex_bonus.h"
 
-char	*check_acces(char **envp, char *command)
+// char	*check_acces(char **envp, char *command)
+// {
+// 	char	*path;
+// 	int		i;
+
+// 	i = 0;
+// 	while (envp[++i])
+// 	{
+// 		if (ft_strncmp(envp[i], "PATH", 4) == 0)
+// 		{
+// 			path = &envp[i][5];
+// 			i = -1;
+// 			while (ft_split(path, ':')[++i])
+// 			{
+// 				if (access(ft_strjoin(ft_strjoin(ft_split(path, ':')[i],
+// 							"/"), command), F_OK) == 0)
+// 					return (ft_strjoin(ft_strjoin(ft_split(path, ':')[i],
+// 							"/"), command));
+// 			}
+// 			break ;
+// 		}
+// 	}
+// 	return (NULL);
+// }
+
+char *check_acces(char **envp, char *command)
 {
-	char	*path;
-	int		i;
+	char *path;
+	int i;
 
 	i = 0;
+	if (strchr(command, '/'))
+		return (command);
+
 	while (envp[++i])
 	{
 		if (ft_strncmp(envp[i], "PATH", 4) == 0)
@@ -27,12 +55,17 @@ char	*check_acces(char **envp, char *command)
 			while (ft_split(path, ':')[++i])
 			{
 				if (access(ft_strjoin(ft_strjoin(ft_split(path, ':')[i],
-							"/"), command), F_OK) == 0)
+												 "/"),
+									  command),
+						   F_OK) == 0)
 					return (ft_strjoin(ft_strjoin(ft_split(path, ':')[i],
-							"/"), command));
+												  "/"),
+									   command));
 			}
-			break ;
+			break;
 		}
 	}
-	return (NULL);
+	write(2, ft_strjoin(command, ": command not found \n"),
+		  ft_strlen(ft_strjoin(command, ": command not found \n")));
+	exit(1);
 }
