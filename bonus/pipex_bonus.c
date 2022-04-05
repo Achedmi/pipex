@@ -6,29 +6,30 @@
 /*   By: achedmi <achedmi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/18 12:12:58 by achedmi           #+#    #+#             */
-/*   Updated: 2022/04/05 14:27:36 by achedmi          ###   ########.fr       */
+/*   Updated: 2022/04/05 20:15:31 by achedmi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex_bonus.h"
 
-int	here_docing(char *limiter, int fd)
+int here_docing(char *limiter, int fd)
 {
-	char	*line;
+	char *line;
 
 	while (1)
 	{
 		line = get_next_line(0);
-		if (ft_strncmp(line, limiter, ft_strlen(line) - 1) == 0)
-			break ;
-		write(fd, line, ft_strlen(line));
+		if (line && !strcmp(line, limiter))
+			break;
+		if (line)
+			write(fd, line, ft_strlen(line));
 		free(line);
 	}
 	free(line);
 	return (3);
 }
 
-void	executing(struct s_data *data, int in, char *commande)
+void executing(struct s_data *data, int in, char *commande)
 {
 	dup2(in, 0);
 	dup2(data->fds[1], 1);
@@ -36,13 +37,13 @@ void	executing(struct s_data *data, int in, char *commande)
 	close(data->fds[1]);
 	close(in);
 	execve(check_acces(data->envp, ft_split(commande, ' ')[0]),
-		ft_split(commande, ' '), data->envp);
+		   ft_split(commande, ' '), data->envp);
 	write(2, ft_strjoin(strerror(errno), "\n"),
-		ft_strlen(ft_strjoin(strerror(errno), "\n")));
+		  ft_strlen(ft_strjoin(strerror(errno), "\n")));
 	exit(0);
 }
 
-void	to_execute(struct s_data *data, int *i, int *j, int *tmp_in)
+void to_execute(struct s_data *data, int *i, int *j, int *tmp_in)
 {
 	if (*i == data->argc - 2)
 		data->fds[1] = data->files[1];
@@ -58,11 +59,11 @@ void	to_execute(struct s_data *data, int *i, int *j, int *tmp_in)
 	(*i)++;
 }
 
-void	forking(struct s_data *data)
+void forking(struct s_data *data)
 {
-	int	i;
-	int	j;
-	int	tmp_in;
+	int i;
+	int j;
+	int tmp_in;
 
 	i = open_files(data);
 	data->id = malloc(sizeof(int) * (data->argc - (i + 1)));
@@ -76,13 +77,15 @@ void	forking(struct s_data *data)
 	free(data->id);
 }
 
-int	main(int argc, char **argv, char **envp)
+int main(int argc, char **argv, char **envp)
 {
-	struct s_data	*data;
+	struct s_data *data;
 
 	data = malloc(sizeof(struct s_data));
 	data->argc = argc;
 	data->argv = argv;
+	data->limiter = ft_strjoin(argv[2], "\n");
+	// data->argv[2] = ft_strjoin(argv[2], "\n");
 	data->envp = envp;
 	if (argc < 5)
 	{

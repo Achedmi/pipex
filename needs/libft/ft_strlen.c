@@ -6,7 +6,7 @@
 /*   By: achedmi <achedmi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/03 10:17:17 by achedmi           #+#    #+#             */
-/*   Updated: 2021/11/15 15:33:41 by achedmi          ###   ########.fr       */
+/*   Updated: 2022/04/05 17:39:28 by achedmi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ size_t	ft_strlen(const char *s)
 	size_t	c;
 
 	c = 0;
-	while (*s)
+	while (s && *s)
 	{
 		s++;
 		c++;
