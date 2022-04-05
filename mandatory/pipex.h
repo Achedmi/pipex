@@ -6,13 +6,12 @@
 /*   By: achedmi <achedmi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/03 20:22:37 by achedmi           #+#    #+#             */
-/*   Updated: 2022/04/05 14:26:09 by achedmi          ###   ########.fr       */
+/*   Updated: 2022/04/05 20:40:45 by achedmi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PIPEX_H
 # define PIPEX_H
-# include<stdio.h>
 # include<fcntl.h>
 # include<unistd.h>
 # include<sys/wait.h>
