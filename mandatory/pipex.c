@@ -6,12 +6,11 @@
 /*   By: achedmi <achedmi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/18 12:12:58 by achedmi           #+#    #+#             */
-/*   Updated: 2022/04/05 14:10:06 by achedmi          ###   ########.fr       */
+/*   Updated: 2022/04/05 14:26:01 by achedmi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
-#include <errno.h>
 
 struct s_data
 {

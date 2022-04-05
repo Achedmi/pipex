@@ -6,9 +6,11 @@
 /*   By: achedmi <achedmi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/05 14:09:52 by achedmi           #+#    #+#             */
-/*   Updated: 2022/04/05 14:16:33 by achedmi          ###   ########.fr       */
+/*   Updated: 2022/04/05 14:26:24 by achedmi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#include "pipex.h"
 
 char	*check_acces(char **envp, char *command)
 {

@@ -6,22 +6,11 @@
 /*   By: achedmi <achedmi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/18 12:12:58 by achedmi           #+#    #+#             */
-/*   Updated: 2022/04/05 14:21:05 by achedmi          ###   ########.fr       */
+/*   Updated: 2022/04/05 14:27:36 by achedmi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex_bonus.h"
-#include <errno.h>
-
-struct s_data
-{
-	int		files[2];
-	int		fds[2];
-	int		argc;
-	char	**argv;
-	char	**envp;
-	int		*id;
-};
 
 int	here_docing(char *limiter, int fd)
 {
